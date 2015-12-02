@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+#02/12/2015
 #script tem o intuito de fazer um teste de conexão
 #seja através de um site ou IP.
 #
