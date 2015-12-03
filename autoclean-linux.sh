@@ -18,7 +18,37 @@ if [[ `id -u` -ne 0 ]]; then
 		exit
 fi
 
-cleaning()
+packagemanager()
+{
+clear
+echo
+	which apt 1>/dev/null 2>/dev/stdout
+	if [ $? -eq 0 ]; then
+		cleaning_apt
+	else
+		cleaning_rpm
+	fi
+}
+
+cleaning_rpm()
+{
+clear
+if which -a prelink; then
+	clear
+	echo "Limpando Cache de Bibliotecas"
+	dnf -y clean all
+	dnf -y clean headers
+	dnf -y clean packages
+	echo "--------------------------------------------"
+	echo "Otimizando as Bibliotecas dos Programas"
+	/etc/cron.daily/prelink
+	echo "--------------------------------------------"
+	clear
+	echo "Limpeza Concluída"
+	sleep 3
+}
+
+cleaning_apt()
 {
 clear
 if which -a prelink && which -a deborphan; then
@@ -80,7 +110,7 @@ echo "Bem vindo ao script Autoclean Linux"
 read -n1 -p "Para continuar escolha s(sim) ou n(não)  " escolha
 	case $escolha in
 		s|S) echo
-			cleaning
+			packagemanager
 			;;
 		n|N) echo
 			echo Finalizando o script...

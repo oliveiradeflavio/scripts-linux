@@ -16,6 +16,20 @@ if [[ `id -u` -ne 0 ]]; then
 		exit
 fi
 
+packagemanager()
+{
+clear
+echo
+	which apt 1>/dev/null 2>/dev/stdout
+	if [ $? -eq 0 ]; then
+		swap ; optimize
+	else
+		echo -e "Sistema incompativel\ncom esse script"
+		sleep 2
+		exit
+	fi
+}
+
 swap()
 {
 memoswap=$(grep "vm.swappiness=10" /etc/sysctl.conf)
@@ -110,7 +124,7 @@ echo "Bem vindo ao script Otimiza Sistema"
 read -n1 -p "Para continuar escolha s(sim) ou n(não)  " escolha
 	case $escolha in
 		s|S) echo
-			swap ; optimize
+			packagemanager
 			;;
 		n|N) echo
 			echo Finalizando o script...
