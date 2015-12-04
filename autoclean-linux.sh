@@ -46,6 +46,30 @@ if which -a prelink; then
 	clear
 	echo "Limpeza Concluída"
 	sleep 3
+else
+	clear
+	echo -e "Você precisa instalar um(1) programa\n para continuar com a Limpeza."
+	read -p "Deseja instalar o Prelink ? s/n: " -n1 escolha
+	case $escolha in
+		s|S) echo
+			testaconexao
+			apt-get install prelink -y ; 
+			sed -i 's/unknown/yes/g' /etc/default/prelink
+			cleaning_rpm
+			;;
+		n|N) echo
+			echo Saindo, não executando a limpeza...
+			sleep 1
+			exit
+			;;
+		*) echo
+			echo Alternativas incorretas ... Saindo!!!
+			sleep 1
+			exit
+			;;
+	esac
+
+fi
 }
 
 cleaning_apt()
@@ -89,7 +113,7 @@ else
 			testaconexao
 			apt-get install prelink deborphan -y ; 
 			sed -i 's/unknown/yes/g' /etc/default/prelink
-			limpeza
+			cleaning_apt
 			;;
 		n|N) echo
 			echo Saindo, não executando a limpeza...
