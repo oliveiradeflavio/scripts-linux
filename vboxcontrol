@@ -1,0 +1,221 @@
+#! /bin/bash
+### BEGIN INIT INFO
+# Provides: virtualbox_vms
+# Required-Start:    $local_fs $syslog $remote_fs
+# Required-Stop:     $local_fs $syslog $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Control VirtualBox Virtual Machine instances
+### END INIT INFO
+#
+# Version 2008051100 by Jochem Kossen <jochem.kossen@gmail.com>
+# http://farfewertoes.com
+#
+# Released in the public domain
+#
+# This file came with a README file containing the instructions on how
+# to use this script.
+#
+
+. /lib/lsb/init-functions
+
+# Are we running from init?
+run_by_init() {
+    ([ "$previous" ] && [ "$runlevel" ]) || [ "$runlevel" = S ]
+}
+
+################################################################################
+# INITIAL CONFIGURATION
+VBOXDIR="/etc/virtualbox"
+VM_USER="root"
+USE_NAT="yes"
+
+export PATH="${PATH:+$PATH:}/bin:/usr/bin:/usr/sbin:/sbin"
+
+if [ -f $VBOXDIR/config ]; then
+    . $VBOXDIR/config
+else
+    echo "ERROR: $VBOXDIR/config does not exist. Exiting."
+    exit 1
+fi
+
+SU="su $VM_USER -c"
+VBOXMANAGE="VBoxManage -nologo"
+
+################################################################################
+# FUNCTIONS
+
+# Determine if USE_NAT is set to "yes"
+use_nat() {
+    if [ "$USE_NAT" = "yes" ]; then
+        return `true`
+    else
+        return `false`
+    fi
+}
+
+# Bring up the bridge interface
+enable_bridge() {
+    # If NAT is enabled, don't do anything
+    use_nat && return
+
+    # Load the tun module
+    if [ ! -e /dev/net/tun ]; then
+        modprobe tun
+    fi
+
+    brctl addbr br0 || /bin/true
+
+    # Disable $HOST_IF; host will use br0 instead
+    ifdown $HOST_IF
+    ifconfig $HOST_IF 0.0.0.0 promisc
+    brctl addif br0 $HOST_IF
+
+    # Bring up br0
+    ifup br0
+
+    # Answer ARP requests for $HOST_IP (which now come on br0) with the MAC
+    # address of $HOST_IF
+    arp -Ds $HOST_IP $HOST_IF pub
+}
+
+# Bring down the bridge interface
+disable_bridge() {
+    # If NAT is enabled, don't do anything
+    use_nat && return
+
+    ifdown br0
+    brctl delbr br0
+    ifup $HOST_IF
+}
+
+# Activate tap interfaces
+enable_taps() {
+    # If NAT is enabled, don't do anything
+    use_nat && return
+
+    for TAP in $TAPS; do
+        # Check if $TAP is configured already
+        ifconfig $TAP > /dev/null 2>&1
+        if [ $? != 0 ]; then
+            tunctl -t $TAP -u $VM_USER
+            brctl addif br0 $TAP
+
+            # Disable tap interfaces for host; guest will activate them for themselves
+            ifconfig $TAP 0.0.0.0 promisc
+
+            # Enable proxy_arp so that ARP requests can be answered correctly
+            # by the host
+            echo 1 > /proc/sys/net/ipv4/conf/$TAP/proxy_arp
+
+            # Add a route for the tap device
+            route add -host $HOST_IP dev $TAP
+        else
+            log_failure_msg "Interface $TAP already configured"
+        fi
+    done
+}
+
+# Disable/deconfigure tap interfaces
+disable_taps() {
+    # If NAT is enabled, don't do anything
+    use_nat && return
+
+    for TAP in $TAPS; do
+        route del -host $HOST_IP dev $TAP
+        brctl delif br0 $TAP
+        tunctl -d $TAP
+    done
+}
+
+# Check for running machines every few seconds; return when all machines are
+# down
+wait_for_closing_machines() {
+    RUNNING_MACHINES=`$SU "$VBOXMANAGE list runningvms" | wc -l`
+    if [ $RUNNING_MACHINES != 0 ]; then
+        sleep 5
+        wait_for_closing_machines
+    fi
+}
+
+################################################################################
+# RUN
+case "$1" in
+    start)
+        if [ -f /etc/virtualbox/machines_enabled ]; then
+            if [ ! `use_nat` ]; then
+            ##################  ###
+            #    enable_bridge
+            #    enable_taps
+            ##################
+
+                chown root.vboxusers /dev/net/tun
+                chmod 0660 /dev/net/tun
+            fi
+
+            cat /etc/virtualbox/machines_enabled | while read VM; do
+                log_action_msg "Starting VM: $VM ..."
+                $SU "$VBOXMANAGE startvm \"$VM\" -type vrdp"
+            done
+        fi
+        ;;
+    stop)
+        # NOTE: this stops all running VM's. Not just the ones listed in the
+        # config
+        search="\""
+        $SU "$VBOXMANAGE list runningvms" | while read VM; do
+            vmNameAux=${VM:1}
+            endVMName=`expr index "$vmNameAux" $search`-1
+            vmName=${vmNameAux:0:endVMName}
+            log_action_msg "Shutting down VM: $vmName - $VM ..."
+            $SU "$VBOXMANAGE controlvm $vmName savestate"
+	    echo $SU "$VBOXMANAGE controlvm $vmName acpipowerbutton"
+        done
+
+        wait_for_closing_machines
+
+        #################  ###
+        #if [ ! `use_nat` ]; then
+        #  disable_taps
+        #  disable_bridge
+        #fi
+        #################
+        ;;
+    bridge-up)
+        enable_bridge
+        ;;
+    bridge-down)
+        disable_bridge
+        ;;
+    taps-up)
+        enable_taps
+        ;;
+    taps-down)
+        disable_taps
+        ;;
+    start-vm)
+        log_action_msg "Starting VM: $2 ..."
+        $SU "$VBOXMANAGE startvm \"$2\" -type vrdp"
+        ;;
+    stop-vm)
+        log_action_msg "Stopping VM: $2 ..."
+        $SU "$VBOXMANAGE controlvm \"$2\" acpipowerbutton"
+        ;;
+    poweroff-vm)
+        log_action_msg "Powering off VM: $2 ..."
+        $SU "$VBOXMANAGE controlvm \"$2\" poweroff"
+        ;;
+    status)
+        log_action_msg "The following virtual machines are currently running:"
+        $SU "$VBOXMANAGE list runningvms" | while read VM; do
+            echo -n "$VM ("
+            echo -n `$SU "VBoxManage showvminfo $VM|grep Name:|sed -e 's/^Name:\s*//g'"`
+            echo ')'
+        done
+        ;;
+    *)
+        log_failure_msg "Usage: $0 {start|stop|status|start-vm <VM name>|stop-vm <VM name>|poweroff-vm <VM name>|bridge-up|bridge-down|taps-up|taps-down}"
+        exit 3
+esac
+
+exit 0
