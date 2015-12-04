@@ -40,6 +40,11 @@ if which -a prelink; then
 	dnf -y clean headers
 	dnf -y clean packages
 	echo "--------------------------------------------"
+	echo "Removendo Arquivos (.bak, ~, .tmp) da pasta Home"
+	for i in *~ *.bak *.tmp; do
+		find $HOME -iname "$i" -exec rm -f {} \;
+	done
+	echo "--------------------------------------------"
 	echo "Otimizando as Bibliotecas dos Programas"
 	/etc/cron.daily/prelink
 	echo "--------------------------------------------"
@@ -97,6 +102,11 @@ if which -a prelink && which -a deborphan; then
 	echo "--------------------------------------------"
 	echo "Removendo Pacotes Órfãos"
 	apt-get remove $(deborphan) -y ; apt-get autoremove -y
+	echo "--------------------------------------------"
+	echo "Removendo Arquivos (.bak, ~, .tmp) da pasta Home"
+	for i in *~ *.bak *.tmp; do
+		find $HOME -iname "$i" -exec rm -f {} \;
+	done
 	echo "--------------------------------------------"
 	echo "Otimizando as Bibliotecas dos Programas"
 	/etc/cron.daily/prelink
