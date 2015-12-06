@@ -63,23 +63,23 @@ ratio=$(grep "vm.dirty_ratio=25" /etc/sysctl.conf)
 
 optimize()
 {
-memfree=$(grep "memfree = 90" /etc/preload.conf)
-memcached=$(grep "memcached = 35" /etc/preload.conf)
-processes=$(grep "processes = 50" /etc/preload.conf)
+memfree=$(grep "memfree = 50" /etc/preload.conf)
+memcached=$(grep "memcached = 0" /etc/preload.conf)
+processes=$(grep "processes = 30" /etc/preload.conf)
 prelink=$(grep "PRELINKING=unknown" /etc/default/prelink)
 
-	if which -a prelink && which -a preload; then
+	if which -a prelink && which -a preload 1>/dev/null 2>/dev/stdout; then
 		echo
 		echo "Configurando o PRELOAD"
-		if [[ $memfree != "memfree = 90" ]];then
+		if [[ $memfree == "memfree = 90" ]];then
 			echo "configurando..."
 			sed -i 's/memfree = 50/memfree = 90/g' /etc/preload.conf
 
-		elif [[ $memcached != "memcached = 35" ]]; then
+		elif [[ $memcached == "memcached = 35" ]]; then
 			echo "configurando..."
 			sed -i 's/memcached = 0/memcached = 35/g' /etc/preload.conf
 
-		elif [[ $processes != "processes = 50" ]]; then
+		elif [[ $processes == "processes = 50" ]]; then
 			echo "configurando..."
 			sed -i 's/processes = 30/processes = 50/g' /etc/preload.conf
 
@@ -90,10 +90,12 @@ prelink=$(grep "PRELINKING=unknown" /etc/default/prelink)
 		echo
 		echo "Ativando o PRELINK"
 		if [[ $prelink == "PRELINKING=unknown" ]]; then
-			echo "Otimização já adicionada anteriormente."
-		else
 			echo "adicionando ..."
 			sed -i 's/unknown/yes/g' /etc/default/prelink
+
+		else
+			echo "Otimização já adicionada anteriormente."
+					
 		fi
 	else
 		clear
