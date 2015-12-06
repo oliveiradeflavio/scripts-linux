@@ -68,7 +68,7 @@ memcached=$(grep "memcached = 0" /etc/preload.conf)
 processes=$(grep "processes = 30" /etc/preload.conf)
 prelink=$(grep "PRELINKING=unknown" /etc/default/prelink)
 
-	if which -a prelink && which -a preload 1>/dev/null 2>/dev/stdout; then
+	if which -a prelink 1>/dev/null 2>/dev/stdout && which -a preload 1>/dev/null 2>/dev/stdout; then
 		echo
 		echo "Configurando o PRELOAD"
 		if [[ $memfree == "memfree = 90" ]];then
