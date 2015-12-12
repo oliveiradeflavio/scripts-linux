@@ -8,11 +8,11 @@
 #http://youtube.com/flaviodicas
 #https://github.com/oliveiradeflavio
 
-if [[ `id -u` -ne 0 ]]; then
+if [[ `id -u` -eq 0 ]]; then
 	echo
-		echo "Você precisa de poderes administrativos (root)"
+		echo "Execute esse script sem ser ROOT"
 		echo "Saindo do script..."
-		sleep 2
+		sleep 5
 		exit
 fi
 
@@ -51,20 +51,18 @@ architecture()
 clear
 cd /tmp/
 
-	if uname -m | grep '64'; then
+	if uname -m | grep '64' 1>/dev/null 2>/dev/stdout; then
 		echo "Download Popcorntime"
 		echo
 		testconnection
-		wget -c popcorn-time.se/Popcorn-Time-linux64.tar.gz -O pop64.tar.gz
-		tar -vzxf pop64.tar.gz -C /opt/ ; mv /opt/Popcorn* /opt/popcorntime
-		ln -sf /opt/popcorntime/Popcorn-Time /usr/bin/Popcorn-Time
+		wget -c http://www67.zippyshare.com/d/79zgV98j/7057/Popcorn-Time-0.3.8-5-Linux-64.tar.xz -O pop64.tar.xz
+		tar -Jxf pop64.tar.xz 1>/dev/null 2>/dev/stdout ; cd pop64/ ; ./install
 	else
 		echo "Download Popcorntime"
 		echo
 		testconnection
-		wget -c popcorn-time.se/Popcorn-Time-linux32.tar.gz -O pop32.tar.gz
-		tar -vzxf pop32.tar.gz -C /opt/ ; mv /opt/Popcorn* /opt/popcorntime
-		ln -sf /opt/popcorntime/Popcorn-Time /usr/bin/Popcorn-Time
+		wget -c http://www50.zippyshare.com/d/mFes2Adx/6814/Popcorn-Time-0.3.8-5-Linux-32.tar.xz -O pop32.tar.gz
+		tar -Jxf pop32.tar.xz 1>/dev/null 2>/dev/stdout ; cd pop32/ ; ./install
 	fi
 echo
 echo "Concluído"
@@ -76,24 +74,15 @@ clear
 	echo "Verificando Instalações anteriores..."
 	echo " Por favor aguarde..."
 	sleep 2
-	if which -a popcorntime; then
 		rm -Rf /opt/popcorntime
 		rm -Rf /usr/bin/Popcorn-Time
 		rm -Rf /usr/share/applications/popcorntime.desktop
+		rm -Rf ~/.Popcorn-Time
+		rm -Rf ~/.local/share/applications/Popcorn-Time.desktop
+		rm -Rf ~/.local/share/icons/popcorntime.png
+		rm -Rf ~/.config/Popcorn-Time
 		echo "Remoção concluída"
-	fi
-echo
-echo "Concluído"
-}
-
-icon()
-{
-clear
-	echo "Criando Atalho"
-	echo
-	echo -e "[Desktop Entry]\nVersion=1.0\nType=Application\nTerminal=false\nName=popcorntime\nExec=/opt/popcorntime/Popcorn-Time\nIcon=/opt/popcorntime/popcorntime.png\nCategories=Application;" >> /usr/share/applications/popcorntime.desktop
-	sleep 1
-	cp /usr/share/applications/popcorntime.desktop  ~/Área\ de\ Trabalho/
+	
 echo
 echo "Concluído"
 }
@@ -110,7 +99,7 @@ clear
 		case $escolha in
 			i|I) echo
 				echo Analisando sistema
-				verify ; architecture ; icon
+				verify ; architecture
 				;;
 			r|R) echo
 				echo Aguarde...
