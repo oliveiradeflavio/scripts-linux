@@ -55,13 +55,13 @@ cd /tmp/
 		echo "Download Popcorntime"
 		echo
 		testconnection
-		wget -c http://www67.zippyshare.com/d/79zgV98j/7057/Popcorn-Time-0.3.8-5-Linux-64.tar.xz -O pop64.tar.xz
+		wget -c http://www67.zippyshare.com/d/79zgV98j/438944/Popcorn-Time-0.3.8-5-Linux-64.tar.xz
 		tar -Jxf pop64.tar.xz 1>/dev/null 2>/dev/stdout ; cd pop64/ ; ./install
 	else
 		echo "Download Popcorntime"
 		echo
 		testconnection
-		wget -c http://www50.zippyshare.com/d/mFes2Adx/6814/Popcorn-Time-0.3.8-5-Linux-32.tar.xz -O pop32.tar.gz
+		wget -c http://www50.zippyshare.com/d/mFes2Adx/615597/Popcorn-Time-0.3.8-5-Linux-32.tar.xz
 		tar -Jxf pop32.tar.xz 1>/dev/null 2>/dev/stdout ; cd pop32/ ; ./install
 	fi
 echo
