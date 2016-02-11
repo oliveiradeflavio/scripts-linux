@@ -58,7 +58,7 @@ else
 	case $escolha in
 		s|S) echo
 			testaconexao
-			apt-get install prelink -y ; 
+			apt-get install prelink -y ;
 			sed -i 's/unknown/yes/g' /etc/default/prelink
 			cleaning_rpm
 			;;
@@ -121,7 +121,7 @@ else
 	case $escolha in
 		s|S) echo
 			testaconexao
-			apt-get install prelink deborphan -y ; 
+			apt-get install prelink deborphan -y ;
 			sed -i 's/unknown/yes/g' /etc/default/prelink
 			cleaning_apt
 			;;

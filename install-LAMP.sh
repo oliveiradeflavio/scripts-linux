@@ -50,7 +50,7 @@ if ! ping -c 7 www.google.com.br 1>/dev/null 2>/dev/stdout; then
 				;;
 			*) echo
 				echo Alternativas incorretas ... Saindo!!!!
-				sleep 2				
+				sleep 2
 				exit
 				;;
 	esac
@@ -59,6 +59,7 @@ else
 	sleep 1
 
 fi
+}
 
 insta()
 {
@@ -108,8 +109,12 @@ apt-get install libgnome2-0 -y 1>/dev/null 2>/dev/stdout
 		sleep 2
 	else
 		echo "instalando..."
-		apt-get install php5 libapache2-mod-php5 php5-mcrypt php5-cli php5enmod mcrypt -y
+		apt-get install php5 libapache2-mod-php5 phpmyadmin php5-mcrypt php5-cli mcrypt -y
 		sleep 2
+		clear
+		echo "ativando extensão mcrypt"
+		php5enmod mcrypt
+		sleep 4
 		clear
 		sleep 3
 	        echo "Testando o PHP"
@@ -134,7 +139,6 @@ echo
 	echo
 	read -n1 -p "Deseja prosseguir? s/n  " escolha
 	case $escolha in
-		echo
 		s|S) echo
 			packagemanager
 			;;
@@ -148,4 +152,3 @@ echo
 			sleep 2
 			;;
 	esac
-
