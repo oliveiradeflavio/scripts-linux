@@ -49,8 +49,8 @@ reset_conf()
 clear
 echo "-------------------------------------------------------------------------"
 echo -e "\033[01;31mCuidado! Ao executar esse script, todas as configurações\n
-da interface Unity será restaurada para suas propriedades padrões. Históricos\n
-personalizações de diretórios/pastas irão ser excluidos. Não se preocupe\n
+da interface Unity será restaurada para seus valores padrões. Históricos\n
+personalizações de diretórios irão ser resetados. Não se preocupe\n
 seus arquivos estarão intactos.\033[0m\n"
 echo "-------------------------------------------------------------------------"
 echo
