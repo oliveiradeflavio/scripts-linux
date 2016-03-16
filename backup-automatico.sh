@@ -26,7 +26,7 @@ echo "Arquivo a ser salvo: $bkplocal"
 echo "Destino do backup: $bkpdest"
 sleep 3
 echo
-read -n1 -p "As informações estão corretas? s/n" escolha
+read -n1 -p "As informações estão corretas? s/n =  " escolha
 case $escolha in
   S|s) echo
     rsync -Cavzpu --progress $bkplocal $bkpdest
@@ -45,9 +45,9 @@ case $escolha in
 bkpfull()
 {
   clear
-  echo "Escolha o arquivo a ser feito o backup"
+  echo "Escolha o diretório a ser feito o backup"
   sleep 2
-  bkplocal=$(zenity --file-selection --multiple)
+  bkplocal=$(zenity --file-selection --directory)
   echo
   echo "Escolha o destino para onde o backup será salvo"
   sleep 2
@@ -59,7 +59,7 @@ bkpfull()
   echo "Destino do backup: $bkpdest"
   sleep 3
   echo
-  read -n1 -p "As informações estão corretas? s/n" escolha
+  read -n1 -p "As informações estão corretas? s/n =  " escolha 
   case $escolha in
   S|s) echo
     rsync -bzpvrl --progress $bkplocal $bkpdest
@@ -87,7 +87,7 @@ ajuda()
   destino. Se no destino contiver os mesmos arquivos, ele somente fará a substiuiçao\n
   se os arquivos de origem forem diferentes dos arquivos de destino."
   echo
-  read -n1 -p "Voltar ao Menu Principal. s/n" -s escolha
+  read -n1 -p "Voltar ao Menu Principal. s/n " -s escolha ; echo "($escolha)"
   case $escolha in
     s|S) echo
         mainmenu
