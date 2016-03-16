@@ -29,7 +29,7 @@ echo
 read -n1 -p "As informações estão corretas? s/n" escolha
 case $escolha in
   S|s) echo
-    rsync -Cavzpu $bkplocal $bkpdest
+    rsync -Cavzpu --progress $bkplocal $bkpdest
     ;;
   N|n) echo
     bkpinc
@@ -62,7 +62,7 @@ bkpfull()
   read -n1 -p "As informações estão corretas? s/n" escolha
   case $escolha in
   S|s) echo
-    rsync -bzpvrl $bkplocal $bkpdest
+    rsync -bzpvrl --progress $bkplocal $bkpdest
     ;;
   N|n) echo
     bkpfull
