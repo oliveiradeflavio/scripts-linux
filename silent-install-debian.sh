@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-#01/12/2015
-#Script tem a finalidade de adicionar alguns repositórios oficiais do Brasil
-#dentro da /etc/apt/sources.list e instalar alguns programas padrões para uso.
+#	01/12/2015
+#	Script tem a finalidade de adicionar alguns repositórios oficiais do Brasil
+#	dentro da /etc/apt/sources.list e instalar alguns programas padrões para uso.
 #
-#Desenvolvido por Flávio Oliveira
-#http://flaviodeoliveira.com.br
-#http://youtube.com/flaviodicas
+#	Flávio Oliveira (Flávio Dicas)
+#	http://flaviodeoliveira.com.br
+#	http://youtube.com/flaviodicas
+# http://github.com/oliveiradeflavio
+#	oliveiradeflavio@gmail.com
 
+#	verificação de usário root
 if [[ `id -u` -ne 0 ]]; then
 	echo
 		echo "Você precisa ter poderes administrativos (root)"
@@ -15,13 +18,14 @@ if [[ `id -u` -ne 0 ]]; then
 		exit
 fi
 
+#	verificação de qual versão Debian o usuário tem
 check()
 {
 clear
 verificadistro=$(cat /etc/lsb-release | grep "DISTRIB_ID")
 verificaversao=$(cat /etc/lsb-release | grep "DISTRIB_RELEASE")
 
-	if [[ $verificadistro == "DISTRIB_ID=Debian" ]] && [[ $verificaversao == "DISTRIB_RELEASE=8.2" ]]; then
+	if [[ $verificadistro == "DISTRIB_ID=Debian" ]] && [[ $verificaversao == "DISTRIB_RELEASE=8.3" ]]; then
 		echo "Distribuiçao Debian Jessie"
 		echo
 		echo -e "\033[04;32mProgramas que serão instalados\033[0m"
@@ -36,7 +40,7 @@ verificaversao=$(cat /etc/lsb-release | grep "DISTRIB_RELEASE")
 				;;
 			n|N) echo
 				echo Saindo do script!!
-				sleep 2
+				sleep 1
 				exit
 				;;
 			*) echo
@@ -52,6 +56,9 @@ verificaversao=$(cat /etc/lsb-release | grep "DISTRIB_RELEASE")
 	fi
 }
 
+#	cria um backup da 'sources.list' antes de fazer toda a modificação de repositórios
+# lembrando que são repositórios oficias do Brasil e que vocẽ pode encontrar a Lista
+#	completa no site do Debian (www.debian.org)
 repo()
 {
 clear
@@ -69,6 +76,7 @@ clear
 key
 }
 
+#	importação de chave de segurança para validação de alguns programas a serem instalados
 key()
 {
 clear
@@ -84,7 +92,7 @@ deb-multimedia-keyring_2015.6.1_all.deb ; rm deb-multimedia-keyring_2015.6.1_all
 echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee /etc/apt/sources.list.d/webupd8team-java.list
 echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list
 	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
-wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -	
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 	echo
 	sleep 2
 	echo "Concluído"
@@ -92,6 +100,7 @@ wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key ad
 installation
 }
 
+# função principal onde ocorre toda a atualização da source e instalação de programas
 installation()
 {
 clear
@@ -99,7 +108,7 @@ clear
 	apt-get update 1>/dev/null 2>/dev/stdout
 	echo
 	echo "Instalando Programas"
-	sleep 2
+	sleep 1
 	clear
 	echo "Instalando Firefox"
 	apt-get install firefox -y ; apt-get install -f -y
@@ -118,11 +127,11 @@ clear
 	apt-get install audacious -y ; apt-get install -f -y
 	clear
 	echo "Instalando Codecs Debian Multimedia"
-apt-get install gstreamer0.10-fluendo-mp3 gstreamer0.10-plugins-really-bad 
-ffmpeg sox twolame vorbis-tools lame faad w64codecs libdvdcss2 faac faad 
-ffmpeg2theora flac icedax id3v2 lame libflac++6 libjpeg-progs mencoder 
-mjpegtools mpeg2dec mpeg3-utils mpegdemux mpg123 mpg321 regionset sox 
-uudeview vorbis-tools x264 arj p7zip p7zip-full p7zip-rar rar unrar 
+apt-get install gstreamer0.10-fluendo-mp3 gstreamer0.10-plugins-really-bad
+ffmpeg sox twolame vorbis-tools lame faad w64codecs libdvdcss2 faac faad
+ffmpeg2theora flac icedax id3v2 lame libflac++6 libjpeg-progs mencoder
+mjpegtools mpeg2dec mpeg3-utils mpegdemux mpg123 mpg321 regionset sox
+uudeview vorbis-tools x264 arj p7zip p7zip-full p7zip-rar rar unrar
 unace-nonfree sharutils uudeview mpack cabextract libdvdread4 libav-tools -y
 	clear
 	echo "Instalando o Adobe Flash Player"
@@ -139,7 +148,7 @@ unace-nonfree sharutils uudeview mpack cabextract libdvdread4 libav-tools -y
 	echo "Instalação Concluída"
 }
 clear
-	echo "Bem vindo!!"
+	echo "Bem vindo!! Script instalará programas básicos e codecs no seu Debian"
 	echo
 	echo "Script está analisando seu sistema, aguarde..."
 	sleep 2
