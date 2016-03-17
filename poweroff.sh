@@ -1,33 +1,45 @@
 #!/bin/bash
-#05/12/2015
-#script que agenda um horário para o sistema ser desligado
-#as janelas são construidas através do programa zenity 
-#que já vem instalado na maioria das distribuições
+#	05/12/2015
+#	script agenda um horário para o sistema ser desligado
+#	as janelas são construidas através do programa zenity
+#	que já vem instalado na maioria das distribuições.
 #
-#por Flávio Oliveira
-#https://github.com/oliveiradeflavio
-#http://youtube.com/flaviodicas
-#http://flaviodeoliveira.com.br
-#oliveiradeflavio@gmail.com
+#	por Flávio Oliveira (Flávio Dicas)
+#	https://github.com/oliveiradeflavio
+#	http://youtube.com/flaviodicas
+#	http://flaviodeoliveira.com.br
+#	oliveiradeflavio@gmail.com
 
-
-if [ `id -u` -ne 0 ]; then
+#verifica se o usuário é root
+if [[ `id -u` -ne 0 ]]; then
 	echo
-		echo "Execução permitida apenas para superusuário (root/administrador)"
-		sleep 2 ; exit
+		zenity --info --text="Você precisa ter poderes administrativos (root)
+
+    Execute pelo Terminal:
+    sudo ./poweroff.sh" && echo $?
+		if [ $? -eq 1 ]; then
+        exit 1
+    fi
+    exit 0
 fi
 
+#verifica se o gerenciador do linux é (apt-get)
 packagemanager()
 {
 	which apt 1>/dev/null 2>/dev/stdout
-	if [ $? -eq 0 ]; then 		
+	if [ $? -eq 0 ]; then
 		poweroffsystem
 	else
-		echo -e "alguns comandos são incompativeis\ncom sua distribuição"
-		sleep 2 ; exit
+		zenity --info --text="Erro !!! Alguns comandos incompatíveis.
+		Fechando script." && echo $?
+		if [ $? -eq 1 ]; then
+			exit 1
+		fi
+		exit 0
 	fi
 }
 
+#função principal onde acontece todo o agendamento e exclusão.
 poweroffsystem()
 {
 	zenity --info --text="Desliga o sistema automaticamente através de um aviso prévio" && echo $?
