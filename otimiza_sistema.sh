@@ -1,13 +1,16 @@
 #!/bin/bash
-#30/11/2015
-#Script irá tentar otimizar o sistema operacional
-#Diminuindo a prioridade de uso do SWAP e instalando
-#alguns programas Prelink e Preload
+#	30/11/2015
+#	Script irá tentar otimizar o sistema operacional
+#	Diminuindo a prioridade de uso do SWAP e instalando
+#	alguns programas Prelink e Preload
 #
-#por Flávio Oliveira (flávio dicas)
-#contato: oliveiradeflavio@gmail.com http://youtube.com/flaviodicas
+#	Flávio Oliveira (Flávio Dicas)
+# http://www.flaviodeoliveira.com.br
+#	http://www.youtube.com/flaviodicas
+#	https://github.com/oliveiradeflavio
+#	oliveiradeflavio
 
-
+#verifica se o usário é root
 if [[ `id -u` -ne 0 ]]; then
 	echo
 		echo "Você precisa ter poderes administrativos (root)"
@@ -16,6 +19,7 @@ if [[ `id -u` -ne 0 ]]; then
 		exit
 fi
 
+#verifica o gerenciador de pacotes da distro (apt-get)
 packagemanager()
 {
 clear
@@ -24,12 +28,13 @@ echo
 	if [ $? -eq 0 ]; then
 		swap ; optimize
 	else
-		echo -e "Sistema incompativel\ncom esse script"
+		echo -e "Distribuição incompativel\ncom esse script"
 		sleep 2
 		exit
 	fi
 }
 
+#	diminui a prioridade de swap em disco
 swap()
 {
 memoswap=$(grep "vm.swappiness=10" /etc/sysctl.conf)
@@ -42,25 +47,27 @@ ratio=$(grep "vm.dirty_ratio=25" /etc/sysctl.conf)
 	echo
 	if [[ $memoswap == "vm.swappiness=10" ]]; then
 		echo "Otimizando..."
-		/bin/su -c "echo 'vm.swappiness=10' >> /etc/sysctl.conf"
+		su -c "echo 'vm.swappiness=10' >> /etc/sysctl.conf"
 
 	elif [[ $memocache == "vm.vfs_cache_pressure=60" ]]; then
 		echo "Otimizando..."
-		/bin/su -c "echo 'vm.vfs_cache_pressure=60' >> /etc/sysctl.conf"
+		su -c "echo 'vm.vfs_cache_pressure=60' >> /etc/sysctl.conf"
 
 	elif [[ $background == "vm.dirty_background_ratio=15" ]]; then
 		echo "Otimizando..."
-		/bin/su -c "echo 'vm.dirty_background_ratio=15' >> /etc/sysctl.conf"
+		su -c "echo 'vm.dirty_background_ratio=15' >> /etc/sysctl.conf"
 
 	elif [[ $ratio == "vm.dirty_ratio=25" ]]; then
 		echo "Otimizando..."
-		/bin/su -c "echo 'vm.dirty_ratio=25' >> /etc/sysctl.conf"
+		su -c "echo 'vm.dirty_ratio=25' >> /etc/sysctl.conf"
 	else
 		echo "Não há nada para ser otimizado"
 		echo "Isso porque já foi otimizado anteriormente!"
 	fi
 }
 
+#	altera alguns valores relacionado a cache e memória RAM (cache).
+#	instalação do programa PRELINK e PRELOAD
 optimize()
 {
 memfree=$(grep "memfree = 50" /etc/preload.conf)
@@ -95,7 +102,7 @@ prelink=$(grep "PRELINKING=unknown" /etc/default/prelink)
 
 		else
 			echo "Otimização já adicionada anteriormente."
-					
+
 		fi
 	else
 		clear
@@ -119,10 +126,13 @@ prelink=$(grep "PRELINKING=unknown" /etc/default/prelink)
 	fi
 	echo
 	echo "Otimização Concluída"
-	sleep 1 
-}	
+	sleep 1
+}
 clear
-echo "Bem vindo ao script Otimiza Sistema"
+echo "#######################################"
+echo "# Bem vindo ao script Otimiza Sistema #"
+echo "#######################################"
+echo
 read -n1 -p "Para continuar escolha s(sim) ou n(não)  " escolha
 	case $escolha in
 		s|S) echo
