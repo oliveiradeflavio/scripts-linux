@@ -1,23 +1,30 @@
 #!/bin/bash
 #
-#30/11/2015
-#Script irá tentar fazer uma limpeza no sistema operacional
-#Removedo arquivos que não estão sendo utilizados (cache de Terminal, lib
-#sem uso, etc)
-#será preciso instalar dois programas para concluir a limpeza (Deborphan
-#e Prelink)
+# Data inicial: 30/11/2015
+# O script faz a limpeza de arquivos que não estão sendo mais utilizados pelo
+# sistema. Como bibliotecas obsoletas, caches de programas, configurações etc.
+# O script faz a verificação de dois programas "preload e deborphan". Se os mesmos
+# não estiverem instalado, a instalação ocorrerá automaticamente se o usuário permitir
 #
-#por Flávio Oliveira (flávio dicas)
-#contato: oliveiradeflavio@gmail.com http://youtube.com/flaviodicas
+# Flávio Oliveira (Flávio Dicas)
+# http://www.flaviodeoliveira.com.br
+# http://www.youtube.com/flaviodicas
+# http://github.com/oliveiradeflavio
+# oliveiradeflavio@gmail.com
 
 if [[ `id -u` -ne 0 ]]; then
 	echo
-		echo "Você precisa ter poderes administrativos (root)"
-		echo "O script está sendo finalizado ..."
-		sleep 4
-		exit
+		zenity --info --text="Você precisa ter poderes administrativos (root)
+
+    Execute pelo Terminal:
+    sudo ./autoclean-linux.sh" && echo $?
+		if [ $? -eq 1 ]; then
+        exit 1
+    fi
+    exit 0
 fi
 
+#verifica qual gerenciador de pacotes Linux a distro utiliza
 packagemanager()
 {
 clear
@@ -30,6 +37,7 @@ echo
 	fi
 }
 
+#gerenciador de pacotes rpm (dnf)
 cleaning_rpm()
 {
 clear
@@ -50,15 +58,14 @@ if which -a prelink; then
 	echo "--------------------------------------------"
 	clear
 	echo "Limpeza Concluída"
-	sleep 3
+	sleep 2
 else
 	clear
 	echo -e "Você precisa instalar um(1) programa\n para continuar com a Limpeza."
 	read -p "Deseja instalar o Prelink ? s/n: " -n1 escolha
 	case $escolha in
 		s|S) echo
-			testaconexao
-			apt-get install prelink -y ;
+			dnf install prelink -y
 			sed -i 's/unknown/yes/g' /etc/default/prelink
 			cleaning_rpm
 			;;
@@ -77,6 +84,7 @@ else
 fi
 }
 
+#gerenciador de pacotes deb (apt-get)
 cleaning_apt()
 {
 clear
@@ -113,15 +121,14 @@ if which -a prelink && which -a deborphan; then
 	echo "--------------------------------------------"
 	clear
 	echo "Limpeza Concluída ... "
-	sleep 3
+	sleep 2
 else
 	clear
 	echo -e "Você precisa instalar dois programas\n para continuar com a Limpeza."
 	read -p "Deseja instalar o Prelink e o Deborphan? s/n: " -n1 escolha
 	case $escolha in
 		s|S) echo
-			testaconexao
-			apt-get install prelink deborphan -y ;
+			apt-get install prelink deborphan -y
 			sed -i 's/unknown/yes/g' /etc/default/prelink
 			cleaning_apt
 			;;
@@ -140,7 +147,10 @@ else
 fi
 }
 clear
-echo "Bem vindo ao script Autoclean Linux"
+echo "#################################"
+echo "# Bem vindo ao Autoclean Linux 	#"
+echo "#################################"
+echo
 read -n1 -p "Para continuar escolha s(sim) ou n(não)  " escolha
 	case $escolha in
 		s|S) echo
@@ -148,7 +158,7 @@ read -n1 -p "Para continuar escolha s(sim) ou n(não)  " escolha
 			;;
 		n|N) echo
 			echo Finalizando o script...
-			sleep 1
+			sleep 0.5
 			exit
 			;;
 		*) echo
