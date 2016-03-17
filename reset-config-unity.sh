@@ -1,13 +1,14 @@
 #!/bin/bash
-#2015-2016
-#Restaura as configurações de fábrica da Interface Unity
+#	2015-2016
+#	Restaura as configurações de fábrica da Interface Unity
 #
-#por Flávio Oliveira
-#https://github.com/oliveiradeflavio
-#http://youtube.com/flaviodicas
-#http://flaviodeoliveira.com.br
-#oliveiradeflavio@gmail.com
+#	por Flávio Oliveira
+#	https://github.com/oliveiradeflavio
+#	http://youtube.com/flaviodicas
+#	http://flaviodeoliveira.com.br
+#	oliveiradeflavio@gmail.com
 
+#verifica se o usuário é root (via interface zentiy)
 if [[ `id -u` -ne 0 ]]; then
 	echo
 		zenity --info --text="Você precisa ter poderes administrativos (root)
@@ -20,6 +21,7 @@ if [[ `id -u` -ne 0 ]]; then
     exit 0
 fi
 
+#função principal onde será executada toda o reset do unity
 reset_conf()
 {
   clear
@@ -40,7 +42,7 @@ reset_conf()
   setsid Unity
   unity --reset-icons
   echo
-  sleep 2
+  sleep 1
   echo "Sistema será reiniciado..."
   sleep 2
   reboot
@@ -64,12 +66,12 @@ case $escolha in
     ;;
     N|n) echo
     echo "Cancelando e saindo do script!..."
-    sleep 2
+    sleep 1
     exit
     ;;
     *) echo
     echo "Alternativas incorretas..."
-    sleep 2
+    sleep 1
     exit
     ;;
 esac
