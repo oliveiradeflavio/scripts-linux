@@ -1,14 +1,15 @@
 #!/bin/bash
-#03/12/2015
-#script irá instalar o LAMP no seu sistema Linux
-#Linux, Apache, MySQL e PHP
+#	03/12/2015
+#	script irá instalar o LAMP no seu sistema Linux
+#	Linux, Apache, MySQL e PHP
 #
-#por Flávio Oliveira
-#https://github.com/oliveiradeflavio
-#http://youtube.com/flaviodicas
-#http://flaviodeoliveira.com.br
-#oliveiradeflavio@gmail.com
+#	Flávio Oliveira (Flávio Dicas)
+#	https://github.com/oliveiradeflavio
+#	http://youtube.com/flaviodicas
+#	http://flaviodeoliveira.com.br
+#	oliveiradeflavio@gmail.com
 
+#	verifica se o usuário é root
 if [[ `id -u` -ne 0 ]]; then
 	echo
 		echo "Execute como superusuário (root)"
@@ -17,6 +18,9 @@ if [[ `id -u` -ne 0 ]]; then
 		exit
 fi
 
+#	verifica o gerenciador de pacotes da distro (apt-get)
+#	se quiser instalar em outra distro não utilize o apt-get, só fazer a alteração
+# abaixo para que ele passe a reconhecer o seu gerenciador de pacotes
 packagemanager()
 {
 clear
@@ -25,12 +29,13 @@ echo
 	if [ $? -eq 0 ]; then
 		insta
 	else
-		echo -e "Sistema incompativel\ncom os comandos deste script"
-		sleep 3
+		echo -e "Distribuição incompativel\ncom os comandos deste script"
+		sleep 2
 		exit
 	fi
 }
 
+#	verifica sua comunicação com a internet. Já que iremos baixar bastante pacotes
 testconnection()
 {
 echo "Aguarde!!! Verificando conexão com a internet"
@@ -45,12 +50,12 @@ if ! ping -c 7 www.google.com.br 1>/dev/null 2>/dev/stdout; then
 				;;
 			n|N) echo
 				echo Finalizando script...
-				sleep 2
+				sleep 1
 				exit
 				;;
 			*) echo
 				echo Alternativas incorretas ... Saindo!!!!
-				sleep 2
+				sleep 1
 				exit
 				;;
 	esac
@@ -61,12 +66,13 @@ else
 fi
 }
 
+#	função principal, onde será realizado toda a instalação (LAMP)
 insta()
 {
 clear
 testconnection
 apt-get update 1>/dev/null 2>/dev/stdout
-#abrir link's no navegador padrão do sistema
+#	abrir link's no navegador padrão do sistema
 apt-get install libgnome2-0 -y 1>/dev/null 2>/dev/stdout
 
 	echo "APACHE"
@@ -132,10 +138,8 @@ apt-get install libgnome2-0 -y 1>/dev/null 2>/dev/stdout
 	exit
 }
 clear
-echo
-	echo "Bem vindo!!"
-	echo
-	echo -e "Esse script irá instalar o LAMP\nque são pacotes para\nLINUX, APACHE, MYSQL e PHP"
+	echo "BEM VINDO !!!"
+	echo -e "Esse script irá instalar o LAMP que são pacotes para\nLINUX, APACHE, MYSQL e PHP"
 	echo
 	read -n1 -p "Deseja prosseguir? s/n  " escolha
 	case $escolha in
@@ -144,11 +148,11 @@ echo
 			;;
 		n|N) echo
 			echo Saindo do script
-			sleep 2
+			sleep 1
 			exit
 			;;
 		*) echo
 			echo Alternativas incorretas. Saindo...
-			sleep 2
+			sleep 1
 			;;
 	esac
