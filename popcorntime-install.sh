@@ -55,14 +55,25 @@ cd /tmp/
 		echo "Download Popcorntime"
 		echo
 		testconnection
-		wget -c http://www67.zippyshare.com/d/79zgV98j/438944/Popcorn-Time-0.3.8-5-Linux-64.tar.xz
-		tar -Jxf pop64.tar.xz 1>/dev/null 2>/dev/stdout ; cd pop64/ ; ./install
+		wget https://get.popcorntime.sh/build/Popcorn-Time-0.3.10-Linux-64.tar.xz -O popcorntime.tar.xz
+        mkdir /opt/popcorntime
+		tar Jxf popcorntime.tar.xz -C /opt/popcorntime/ 1>/dev/null 2>/dev/stdout
+        ln -sf /opt/popcorntime/Popcorn-Time /usr/bin/Popcorn-Time
+        echo -e '[Desktop Entry]\n Version=1.0\n Name=popcorntime\n Exec=/opt/popcorntime/Popcorn-Time\n Icon=/opt/popcorntime/src/app/images/icon.png\n Type=Application\n Categories=Application' | sudo tee /usr/share/applications/popcorntime.desktop
+        chmod +x /usr/share/applications/popcorntime.desktop
+        cp /usr/share/applications/popcorntime.desktop  ~/Área\ de\ Trabalho/
 	else
 		echo "Download Popcorntime"
 		echo
 		testconnection
-		wget -c http://www50.zippyshare.com/d/mFes2Adx/615597/Popcorn-Time-0.3.8-5-Linux-32.tar.xz
-		tar -Jxf pop32.tar.xz 1>/dev/null 2>/dev/stdout ; cd pop32/ ; ./install
+		wget https://get.popcorntime.sh/build/Popcorn-Time-0.3.10-Linux-32.tar.xz -O popcorntime.tar.xz
+        mkdir /opt/popcorntime
+		tar Jxf popcorntime.tar.xz -C /opt/popcorntime/ 1>/dev/null 2>/dev/stdout
+        ln -sf /opt/popcorntime/Popcorn-Time /usr/bin/Popcorn-Time
+        echo -e '[Desktop Entry]\n Version=1.0\n Name=popcorntime\n Exec=/opt/popcorntime/Popcorn-Time\n Icon=/opt/popcorntime/src/app/images/icon.png\n Type=Application\n Categories=Application' | sudo tee /usr/share/applications/popcorntime.desktop
+        chmod +x /usr/share/applications/popcorntime.desktop
+        cp /usr/share/applications/popcorntime.desktop  ~/Área\ de\ Trabalho/
+        
 	fi
 echo
 echo "Concluído"
