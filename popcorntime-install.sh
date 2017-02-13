@@ -1,5 +1,5 @@
 #!/bin/bash
-#02/12/2015
+#02/12/2015 - última atualização 13/02/2017
 #script irá fazer a instalação do programa Popcorntime manualmente
 #sem a adição de PPA's
 #
