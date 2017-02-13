@@ -9,7 +9,7 @@
 #https://github.com/oliveiradeflavio
 #http://youtube.com/flaviodicas
 #http://flaviodeoliveira.com.br
-#oliveiradeflavio@gmail.com
+
 
 if [[ `id -u` -ne 0 ]]; then
 	echo
