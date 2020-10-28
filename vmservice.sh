@@ -38,7 +38,7 @@ vmservice()
 echo "Aguarde Verificando alguns programas necessarios"
 which chkconfig 1>/dev/null 2>/dev/stdout
 if [ $? -eq 0 ]; then
-	echo "ok" 1>/devnull 2>/dev/stdout
+	echo "ok" 1>/dev/null 2>/dev/stdout
 else
 	echo "Você precisa do programa chkconfig"
 	sleep 2
